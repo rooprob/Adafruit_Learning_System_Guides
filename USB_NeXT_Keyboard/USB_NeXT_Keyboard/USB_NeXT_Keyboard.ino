@@ -166,6 +166,11 @@ void loop() {
   query();
   resp = getresponse();
 
+#ifdef DEBUG
+  Serial.print("getresponse(): resp is 0x"); Serial.print(resp, HEX);
+  Serial.print("\n");
+#endif
+
   // check for a 'idle' response, we'll do nothing
   if ((resp == NEXT_KMBUS_IDLE) || (resp == NEXT_KMBUS_IDLE_2)) {
 
@@ -183,8 +188,10 @@ void loop() {
   keycode /= 2;
 
 #ifdef DEBUG
-  Serial.print('['); Serial.print(resp, HEX);  Serial.print("] ");
-  Serial.print("keycode: "); Serial.print(keycode);
+  Serial.print("getresponse() after keycode: resp is 0x"); Serial.print(resp, HEX);
+  Serial.print("\n");
+  Serial.print("keycode: ["); Serial.print(keycode); Serial.print("]");
+  Serial.print("\n");
 #endif
 
   // modifiers! you can remap these here,
