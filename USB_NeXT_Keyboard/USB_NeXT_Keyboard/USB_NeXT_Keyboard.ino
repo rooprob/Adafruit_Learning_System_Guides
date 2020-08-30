@@ -29,7 +29,7 @@ uint8_t misopin;
 #define readkbd() ((*misoportreg) & misopin)
 
 // debugging/activity LED
-#define LED 13
+#define LED LED_BUILTIN
 
 #define NEXT_KMBUS_IDLE 0x200600
 
