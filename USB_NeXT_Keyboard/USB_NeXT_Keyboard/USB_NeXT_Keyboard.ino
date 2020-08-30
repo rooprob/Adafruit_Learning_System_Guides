@@ -49,20 +49,20 @@ uint8_t misopin;
 void setLEDs(bool leftLED, bool rightLED) {
   digitalWrite(KEYBOARDOUT, LOW);
   delayMicroseconds(TIMING *9);
-  digitalWrite(KEYBOARDOUT, HIGH);  
+  digitalWrite(KEYBOARDOUT, HIGH);
   delayMicroseconds(TIMING *3);
   digitalWrite(KEYBOARDOUT, LOW);
   delayMicroseconds(TIMING);
 
   if (leftLED)
       digitalWrite(KEYBOARDOUT, HIGH);
-  else 
+  else
       digitalWrite(KEYBOARDOUT, LOW);
   delayMicroseconds(TIMING);
 
   if (rightLED)
       digitalWrite(KEYBOARDOUT, HIGH);
-  else 
+  else
       digitalWrite(KEYBOARDOUT, LOW);
   delayMicroseconds(TIMING);
   digitalWrite(KEYBOARDOUT, LOW);
@@ -74,25 +74,25 @@ void query() {
   // query the keyboard for data
   digitalWrite(KEYBOARDOUT, LOW);
   delayMicroseconds(TIMING *5);
-  digitalWrite(KEYBOARDOUT, HIGH);  
-  delayMicroseconds(TIMING );  
+  digitalWrite(KEYBOARDOUT, HIGH);
+  delayMicroseconds(TIMING );
   digitalWrite(KEYBOARDOUT, LOW);
   delayMicroseconds(TIMING *3);
-  digitalWrite(KEYBOARDOUT, HIGH); 
+  digitalWrite(KEYBOARDOUT, HIGH);
 }
 
 void nextreset() {
   // reset the keyboard
   digitalWrite(KEYBOARDOUT, LOW);
   delayMicroseconds(TIMING);
-  digitalWrite(KEYBOARDOUT, HIGH);  
-  delayMicroseconds(TIMING*4);  
+  digitalWrite(KEYBOARDOUT, HIGH);
+  delayMicroseconds(TIMING*4);
   digitalWrite(KEYBOARDOUT, LOW);
   delayMicroseconds(TIMING);
   digitalWrite(KEYBOARDOUT, HIGH);
   delayMicroseconds(TIMING*6);
   digitalWrite(KEYBOARDOUT, LOW);
-  delayMicroseconds(TIMING*10);  
+  delayMicroseconds(TIMING*10);
   digitalWrite(KEYBOARDOUT, HIGH);
 }
 
@@ -102,16 +102,16 @@ void setup() {
   pinMode(KEYBOARDOUT, OUTPUT);
   pinMode(KEYBOARDIN, INPUT);
   pinMode(LED, OUTPUT);
-  
+
   misoportreg = portInputRegister(digitalPinToPort(KEYBOARDIN));
   misopin = digitalPinToBitMask(KEYBOARDIN);
-  
+
   // according to http://cfile7.uf.tistory.com/image/14448E464F410BF22380BB
   query();
   delay(5);
   nextreset();
   delay(8);
-  
+
   query();
   delay(5);
   nextreset();
@@ -121,7 +121,7 @@ void setup() {
 
 #ifdef DEBUG
   while (!Serial)
-  Serial.begin(57600);
+      Serial.begin(57600);
   Serial.println("NeXT");
 #endif
 }
@@ -138,8 +138,9 @@ uint32_t getresponse() {
       delayMicroseconds(TIMING);
   }
   sei();
-  return data;
 
+
+  return data;
 }
 
 void loop() {
