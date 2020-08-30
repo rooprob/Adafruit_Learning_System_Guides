@@ -70,6 +70,17 @@ void setLEDs(bool leftLED, bool rightLED) {
   digitalWrite(KEYBOARDOUT, HIGH);
 }
 
+void flashLEDs() {
+  setLEDs(true, true);
+  delay(1000);
+  setLEDs(false, false);
+  delay(500);
+  setLEDs(true, true);
+  delay(1000);
+  setLEDs(false, false);
+  delay(500);
+}
+
 void query() {
   // query the keyboard for data
   digitalWrite(KEYBOARDOUT, LOW);
@@ -116,7 +127,9 @@ void setup() {
   delay(5);
   nextreset();
   delay(8);
-  
+
+  flashLEDs();
+
   Keyboard.begin();
 
 #ifdef DEBUG
