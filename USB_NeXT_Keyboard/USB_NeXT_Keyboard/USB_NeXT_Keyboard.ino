@@ -165,22 +165,23 @@ void loop() {
   // keycode is the lower 7 bits
   uint8_t keycode = resp & 0xFF;
   keycode /= 2;
-  
+
 #ifdef DEBUG
   Serial.print('['); Serial.print(resp, HEX);  Serial.print("] ");
   Serial.print("keycode: "); Serial.print(keycode);
 #endif
 
-  // modifiers! you can remap these here, 
+  // modifiers! you can remap these here,
   // but I suggest doing it in the OS instead
-  if (resp & NEXT_KB_CONTROL)
+  if (resp & NEXT_KB_CONTROL) {
     Keyboard.press(KEY_LEFT_CTRL);
-  else 
+  } else {
     Keyboard.release(KEY_LEFT_CTRL);
+  }
 
   if (resp & NEXT_KB_SHIFT_LEFT) {
     Keyboard.press(KEY_LEFT_SHIFT);
-  } else { 
+  } else {
     Keyboard.release(KEY_LEFT_SHIFT);
   }
   if (resp & NEXT_KB_SHIFT_RIGHT) {
@@ -189,32 +190,33 @@ void loop() {
     Keyboard.release(KEY_RIGHT_SHIFT);
   }
   boolean shiftPressed = (resp & (NEXT_KB_SHIFT_LEFT|NEXT_KB_SHIFT_RIGHT)) != 0;
-  
+
   // turn on shift LEDs if shift is held down
   if (shiftPressed)
     setLEDs(true, true);
   else
     setLEDs(false, false);
-    
-  if (resp & NEXT_KB_COMMAND_LEFT)
+
+  if (resp & NEXT_KB_COMMAND_LEFT) {
     Keyboard.press(KEY_LEFT_GUI);
-  else 
+  } else {
     Keyboard.release(KEY_LEFT_GUI);
-    
-  if (resp & NEXT_KB_COMMAND_RIGHT)
+  }
+  if (resp & NEXT_KB_COMMAND_RIGHT) {
     Keyboard.press(KEY_RIGHT_GUI);
-  else 
+  } else {
     Keyboard.release(KEY_RIGHT_GUI);
-
-  if (resp & NEXT_KB_ALTERNATE_LEFT)
+  }
+  if (resp & NEXT_KB_ALTERNATE_LEFT) {
     Keyboard.press(KEY_LEFT_ALT);
-  else 
+  } else {
     Keyboard.release(KEY_LEFT_ALT);
-  if (resp & NEXT_KB_ALTERNATE_RIGHT)
+  }
+  if (resp & NEXT_KB_ALTERNATE_RIGHT) {
     Keyboard.press(KEY_RIGHT_ALT);
-  else 
+  } else {
     Keyboard.release(KEY_RIGHT_ALT);
-
+  }
   if (keycode == 0) return;
   
   for (int i = 0; i< 100; i++) {
