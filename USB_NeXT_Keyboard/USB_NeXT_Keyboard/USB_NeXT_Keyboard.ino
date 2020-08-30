@@ -109,6 +109,9 @@ void nextreset() {
 
 
 void setup() {
+  // https://www.element14.com/community/thread/33253/l/arduino-micro-requires-reset-when-powering-on-to-boot-properly
+  delay(1000);
+
   // set up pin directions
   pinMode(KEYBOARDOUT, OUTPUT);
   pinMode(KEYBOARDIN, INPUT);
