@@ -37,13 +37,13 @@ uint8_t misopin;
 
 // NeXT Keyboard Defines
 // modifiers
-#define NEXT_KB_CONTROL 0x1000
-#define NEXT_KB_ALTERNATE_LEFT 0x20000
-#define NEXT_KB_ALTERNATE_RIGHT 0x40000
-#define NEXT_KB_COMMAND_LEFT 0x8000
-#define NEXT_KB_COMMAND_RIGHT 0x10000
-#define NEXT_KB_SHIFT_LEFT 0x2000
-#define NEXT_KB_SHIFT_RIGHT 0x4000
+#define NEXT_KB_CONTROL 0x2000
+#define NEXT_KB_ALTERNATE_LEFT 0x40000
+#define NEXT_KB_ALTERNATE_RIGHT 0x80000
+#define NEXT_KB_COMMAND_LEFT 0x10000
+#define NEXT_KB_COMMAND_RIGHT 0x20000
+#define NEXT_KB_SHIFT_LEFT 0x4000
+#define NEXT_KB_SHIFT_RIGHT 0x8000
 
 // special command for setting LEDs
 void setLEDs(bool leftLED, bool rightLED) {
