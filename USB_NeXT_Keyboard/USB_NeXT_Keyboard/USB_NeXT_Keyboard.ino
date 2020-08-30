@@ -32,6 +32,8 @@ uint8_t misopin;
 #define LED LED_BUILTIN
 
 #define NEXT_KMBUS_IDLE 0x200600
+// XXX found this code was idle instead
+#define NEXT_KMBUS_IDLE_2 0x200C00
 
 // NeXT Keyboard Defines
 // modifiers
@@ -148,8 +150,14 @@ void loop() {
   resp = getresponse();
 
   // check for a 'idle' response, we'll do nothing
-  if (resp == NEXT_KMBUS_IDLE) return;
-  
+  if ((resp == NEXT_KMBUS_IDLE) || (resp == NEXT_KMBUS_IDLE_2)) {
+
+#ifdef DEBUG
+  Serial.println("keyboard is idle");
+#endif
+    return;
+  }
+
   // turn on the LED when we get real resposes!
   digitalWrite(LED, HIGH);
 
