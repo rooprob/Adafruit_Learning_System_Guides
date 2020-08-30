@@ -242,71 +242,122 @@ void loop() {
     Keyboard.release(KEY_RIGHT_ALT);
   }
   if (keycode == 0) return;
-  
-  for (int i = 0; i< 100; i++) {
-    if (nextkbd_keydesc_us[i*3] == keycode) {
-      keysym_t keydesc = nextkbd_keydesc_us[i*3+1];
-      char ascii = (char) keydesc;
 
+  bool found = false;
+  int i = 0 ;
+  while (!found) {
+
+          // Prevent potential infinite loops if we get an unexpected key
+          // XXX Max number?
+          if (i > 1024) {
 #ifdef DEBUG
-      Serial.print("--> ");      Serial.print(ascii); Serial.print(" / "); Serial.print(keydesc, HEX);
+                  Serial.println("Unexpected keypress detected, err 1!");
 #endif
-
-      int code;
-      switch (keydesc) {
-        case KS_KP_Enter:
-        case KS_Return:    code = KEY_RETURN; break;
-        case KS_Escape:    code = KEY_ESC; break;
-        case KS_BackSpace: code = KEY_BACKSPACE; break;
-        case KS_Up:        code = KEY_UP_ARROW; break;
-        case KS_Down:      code = KEY_DOWN_ARROW; break;
-        case KS_Left:      code = KEY_LEFT_ARROW; break;
-        case KS_Right:     code = KEY_RIGHT_ARROW; break;
-
-        // hacks for two tricky numpad keys
-        case KS_KP_Equal:  code = (shiftPressed ? KS_bar : ascii); break;
-        case KS_KP_Divide:
-          if (shiftPressed) {
-            Keyboard.release(KEY_RIGHT_SHIFT);
-            Keyboard.release(KEY_LEFT_SHIFT);
-
-            code = KS_backslash;            
-          } else {
-            code = ascii;
+                  return;
           }
-          break;
-        
-        // remap the other special keys because the KeyboardMouse can't send proper vol/brightness anyway
-        case KS_AudioLower:  code = KEY_INSERT; break;
-        case KS_AudioRaise:  code = KEY_DELETE; break;
-        case KS_Cmd_BrightnessUp:    code = KEY_PAGE_UP; break;
-        case KS_Cmd_BrightnessDown:  code = KEY_PAGE_DOWN; break;
-        
-        case 0:
-        default: code = ascii;
-      }
-      if ((resp & 0xF00) == 0x400) {  // down press
-#ifdef DEBUG
-        Serial.println(" v ");
-#endif
-        Keyboard.press(code);
-        break;
-      }
-      if ((resp & 0xF00) == 0x500) {
-        Keyboard.release(code);
-#ifdef DEBUG
-        Serial.println(" ^ ");
-#endif
-        break;
-      }
-      
-      // re-press shift if need be
-      if (keydesc == KS_KP_Divide && shiftPressed) {
-          if (resp & NEXT_KB_SHIFT_LEFT)
-            Keyboard.press(KEY_LEFT_SHIFT);
-          if (resp & NEXT_KB_SHIFT_RIGHT)
-            Keyboard.press(KEY_RIGHT_SHIFT);
-      }
-    }
+
+          // MAGIC - what is this calculation?
+
+          if (nextkbd_keydesc_us[i*3] != keycode) {
+                  i ++ ;
+                  continue;
+          }
+
+          found = true;
   }
+
+  if (!found) {
+#ifdef DEBUG
+          Serial.println("Unexpected keypress detected, err 2!");
+#endif
+          return;
+
+  }
+
+  keysym_t keydesc = nextkbd_keydesc_us[i*3+1];
+  char ascii = (char) keydesc;
+
+#ifdef DEBUG
+  Serial.println("Found for keycode at index*3+1 in nextkbd_keydesc_us");
+  Serial.print("This index was: "); Serial.println(i);
+  Serial.print("The index in nextkbd_keydesc_us was: "); Serial.println(i*3);
+  Serial.print("The matching keycode at nextkbd_keydesc_us was: "); Serial.println(keydesc);
+  Serial.print("The +1 keydesc is: HEX 0x "); Serial.println(keydesc, HEX);
+  Serial.print("This is ascii char: "); Serial.println(ascii);
+#endif
+
+  int code;
+  switch (keydesc) {
+
+          case KS_KP_Enter:
+          case KS_Return:    code = KEY_RETURN; break;
+          case KS_Escape:    code = KEY_ESC; break;
+          case KS_BackSpace: code = KEY_BACKSPACE; break;
+          case KS_Up:        code = KEY_UP_ARROW; break;
+          case KS_Down:      code = KEY_DOWN_ARROW; break;
+          case KS_Left:      code = KEY_LEFT_ARROW; break;
+          case KS_Right:     code = KEY_RIGHT_ARROW; break;
+          case KS_equal:     code = KS_equal; break;
+
+                             // hacks for two tricky numpad keys
+          case KS_KP_Equal:  code = (shiftPressed ? KS_bar : ascii); break;
+          case KS_KP_Divide:
+                             if (shiftPressed) {
+                                     Keyboard.release(KEY_RIGHT_SHIFT);
+                                     Keyboard.release(KEY_LEFT_SHIFT);
+
+                                     code = KS_backslash;
+                             } else {
+                                     code = ascii;
+                             }
+                             break;
+
+                             // remap the other special keys because the KeyboardMouse can't send proper vol/brightness anyway
+          case KS_AudioLower:  code = KEY_INSERT; break;
+          case KS_AudioRaise:  code = KEY_DELETE; break;
+          case KS_Cmd_BrightnessUp:    code = KEY_PAGE_UP; break;
+          case KS_Cmd_BrightnessDown:  code = KEY_PAGE_DOWN; break;
+
+          case 0:
+          default:
+               code = ascii;
+#ifdef DEBUG
+               Serial.println("Switch default ... setting code to ascii");
+               Serial.println(ascii);
+               Serial.println(code);
+#endif
+
+  }
+
+
+
+  // keypress
+  if (((resp & 0xF00) == 0x400) || ((resp & 0xF00) == 0x800)) {
+#ifdef DEBUG
+          Serial.print("PRESS KEYCODE v: ");
+          Serial.println(code);
+#endif
+          Keyboard.press(code);
+          return;
+  }
+
+  // release
+  if (((resp & 0xF00) == 0x500) || ((resp & 0xF00) == 0x900) || ((resp & 0xF00) == 0xA00)){
+#ifdef DEBUG
+          Serial.print("RELEASE KEYCODE ^: ");
+          Serial.println(code);
+#endif
+          Keyboard.release(code);
+          return;
+  }
+
+  // re-press shift if need be
+  if (keydesc == KS_KP_Divide && shiftPressed) {
+          if (resp & NEXT_KB_SHIFT_LEFT)
+                  Keyboard.press(KEY_LEFT_SHIFT);
+          if (resp & NEXT_KB_SHIFT_RIGHT)
+                  Keyboard.press(KEY_RIGHT_SHIFT);
+  }
+
+  return;
 }
