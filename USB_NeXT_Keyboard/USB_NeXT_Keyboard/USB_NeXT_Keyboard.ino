@@ -20,7 +20,7 @@
 #define KEYBOARDIN 2
 
 // comment to speed things up, uncomment for help!
-//#define DEBUG 
+//#define DEBUG
 
 // speed up reads by caching the 'raw' pin ports
 volatile uint8_t *misoportreg;
@@ -165,18 +165,19 @@ void loop() {
   uint32_t resp;
   query();
   resp = getresponse();
-
+/*
 #ifdef DEBUG
   Serial.print("getresponse(): resp is 0x"); Serial.print(resp, HEX);
   Serial.print("\n");
 #endif
-
+*/
   // check for a 'idle' response, we'll do nothing
   if ((resp == NEXT_KMBUS_IDLE) || (resp == NEXT_KMBUS_IDLE_2)) {
-
+/*
 #ifdef DEBUG
   Serial.println("keyboard is idle");
 #endif
+*/
     return;
   }
 
